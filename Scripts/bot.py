@@ -15,9 +15,9 @@ Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
 
+import random
 import logging
 import json
-import numpy
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -44,7 +44,7 @@ def help(update, context):
 
 
 def echo(update, context):
-    id = numpy.random.randint(0, len(messages) - 1)
+    id = random.randint(0, len(messages) - 1)
     msg = messages[id]
     """Echo the user message."""
     update.message.reply_text(msg)
