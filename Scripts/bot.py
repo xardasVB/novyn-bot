@@ -30,25 +30,35 @@ logger = logging.getLogger(__name__)
 
 with open("novynyarDB.txt", "r", encoding="utf-8") as f:
     messages = json.loads(f.read())
+with open("neuralDB.txt", "r", encoding="utf-8") as f:
+    neurals = json.loads(f.read())
        
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
 def start(update, context):
     """Send a message when the command /start is issued."""
-    update.message.reply_text('напиши що завгодно')
+    update.message.reply_text('/get - випадкова новина з новин.яру\n/generate - згенерована нейронкой новина')
 
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('напиши що завгодно')
+    update.message.reply_text('/get - випадкова новина з новин.яру\n/generate - згенерована нейронкой новина')
+
+def generate(update, context):
+    id = random.randint(0, len(neurals) - 1)
+    msg = neurals[id]
+    update.message.reply_text(msg)
+
+
+def get(update, context):
+    id = random.randint(0, len(messages) - 1)
+    msg = messages[id]
+    update.message.reply_text(msg)
+    #update.message.reply_text(update.message.chat.first_name + " shut up")
 
 
 def echo(update, context):
-    id = random.randint(0, len(messages) - 1)
-    msg = messages[id]
-    """Echo the user message."""
-    update.message.reply_text(msg)
-    #update.message.reply_text(update.message.chat.first_name + " shut up")
+    update.message.reply_text('/get - випадкова новина з новин.яру\n/generate - згенерована нейронкой новина')
 
 
 def error(update, context):
@@ -70,6 +80,8 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("get", get))
+    dp.add_handler(CommandHandler("generate", generate))
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))

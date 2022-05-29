@@ -85,9 +85,8 @@ model.load_weights(filename)
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 num_to_char = dict((i, c) for i, c in enumerate(chars))
-emojiList  = ['‼️', '😁', '⚡️', '⚡️', '⚡️', '⚡️', '❗️', '❗️', '❗️', '💪', '😎', '🤕', '⚔️', '💁🏻‍♂️']
 
-def get_novyna()
+def get_novyna():
     start = numpy.random.randint(0, len(x_data) - 1)
     pattern = x_data[start]
     index = char_to_num[' ']
@@ -119,7 +118,6 @@ def get_novyna()
         pattern.append(index)
         pattern = pattern[1:len(pattern)]
         i += 1
-    result = numpy.random.choice(emojiList) + " " + result[:-1].capitalize() + ".\n\n@novynyar";
     return result
 
 #while True:
