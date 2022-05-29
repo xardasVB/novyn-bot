@@ -7,14 +7,20 @@ from keras.layers import Dense, Dropout, LSTM
 from keras.utils import np_utils
 from keras.callbacks import ModelCheckpoint
 
-#file = open("novyny.txt", "w", encoding="utf-8").read()
+def sample(preds, temperature=1.0):
+    preds = numpy.asarray(preds).astype('float64')
+    preds = numpy.log(preds) / temperature
+    exp_preds = numpy.exp(preds)
+    preds = exp_preds / numpy.sum(exp_preds)
+    probas = numpy.random.multinomial(1, preds, 1)
+    return numpy.argmax(probas)
 
 def tokenize_words(input):
     # lowercase everything to standardize it
     input = input.lower()
 
     # instantiate the tokenizer
-    tokenizer = RegexpTokenizer(r'[\S+]+')
+    tokenizer = RegexpTokenizer(r'[А-яґєіїҐЄІЇ\']+')#(r'[\S+]+')#(r'\w+')#
     tokens = tokenizer.tokenize(input)
 
     # if the created token isn't in the stop words, make it part of "filtered"
@@ -32,7 +38,7 @@ vocab_len = len(chars)
 print ("Total number of characters:", input_len)
 print ("Total vocab:", vocab_len)
 
-seq_length = 100
+seq_length = 80
 x_data = []
 y_data = []
 
@@ -68,38 +74,55 @@ model.add(LSTM(128))
 model.add(Dropout(0.2))
 model.add(Dense(y.shape[1], activation='softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='adam')
+#model.compile(loss='categorical_crossentropy', optimizer='adam')
+#filepath = "model_weights_saved.hdf5"
+#checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
+#desired_callbacks = [checkpoint]
+#model.fit(X, y, epochs=20, batch_size=256, callbacks=desired_callbacks)
 
-filepath = "model_weights_saved.hdf5"
-checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
-desired_callbacks = [checkpoint]
-
-model.fit(X, y, epochs=20, batch_size=256, callbacks=desired_callbacks)
-
-filename = "model_weights_saved.hdf5"
+filename = "100epochs.hdf5"
 model.load_weights(filename)
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 num_to_char = dict((i, c) for i, c in enumerate(chars))
+emojiList  = ['‼️', '😁', '⚡️', '⚡️', '⚡️', '⚡️', '❗️', '❗️', '❗️', '💪', '😎', '🤕', '⚔️', '💁🏻‍♂️']
 
-start = numpy.random.randint(0, len(x_data) - 1)
-pattern = x_data[start]
-print("Random Seed:")
-print("\"", ''.join([num_to_char[value] for value in pattern]), "\"")
-
-for i in range(1000):
-    x = numpy.reshape(pattern, (1, len(pattern), 1))
-    x = x / float(vocab_len)
-    prediction = model.predict(x, verbose=0)
-    index = numpy.argmax(prediction)
-    result = num_to_char[index]
-
-    sys.stdout.write(result)
-
+def get_novyna()
+    start = numpy.random.randint(0, len(x_data) - 1)
+    pattern = x_data[start]
+    index = char_to_num[' ']
     pattern.append(index)
     pattern = pattern[1:len(pattern)]
+    #print('--- Generating with seed: "' + ''.join([num_to_char[value] for value in pattern]) + '"')
+    #print("\n")
 
-print("Random Seed 2:")
-print("\"", ''.join([num_to_char[value] for value in pattern]), "\"")
+    num_of_chars = numpy.random.randint(70, 200)
 
+    #for temperature in [0.2, 0.5, 0.7, 0.9]:
+    #print('------ temperature:', temperature)
+    #sys.stdout.write(''.join([num_to_char[value] for value in pattern]))
 
+    #for i in range(seq_length):
+    i = 0
+    result = ""
+    while i < num_of_chars or num_to_char[index] != ' ':
+        temperature = numpy.random.choice([0.2, 0.5, 0.5, 0.5, 0.7, 0.7, 0.7, 0.9, 0.9])
+        x = numpy.reshape(pattern, (1, len(pattern), 1))
+        x = x / float(vocab_len)
+        prediction = model.predict(x, verbose=0)[0]
+        index = sample(prediction, temperature)#numpy.argmax(prediction)#
+
+        result += num_to_char[index]
+        #sys.stdout.write(num_to_char[index])
+        #sys.stdout.flush()
+
+        pattern.append(index)
+        pattern = pattern[1:len(pattern)]
+        i += 1
+    result = numpy.random.choice(emojiList) + " " + result[:-1].capitalize() + ".\n\n@novynyar";
+    return result
+
+#while True:
+#    print(get_novyna())
+#    print("\n")
+#    input('Enter \n')
