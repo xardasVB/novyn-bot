@@ -1,5 +1,5 @@
 import asyncio
-import numpy
+import random
 import json
 from telethon import TelegramClient
 from telethon.tl.functions.channels import JoinChannelRequest
@@ -14,16 +14,16 @@ async def main():
     channel = await client.get_entity('novynyar')
 
     messages = await client.get_messages(channel, limit=5000)
-    lst = [] 
-    for m in messages:
-        if m.message:
-            lst.append(m.message)
-    
-    print(len(messages))
-    print(len(lst))
-    
-    with open("novynyarDB.txt", "w", encoding="utf-8") as f:
-        f.write(json.dumps(lst))
+    #lst = [] 
+    #for m in messages:
+    #    if m.message:
+    #        lst.append(m.message)
+    #
+    #print(len(messages))
+    #print(len(lst))
+    #
+    #with open("novynyarDB.txt", "w", encoding="utf-8") as f:
+    #    f.write(json.dumps(lst))
         
     #with open("novyny.txt", "w", encoding="utf-8") as f:
         #for m in messages:
@@ -31,11 +31,11 @@ async def main():
         #        f.write(m.message)
         #        f.write("\n\n")
         
-    with open("novynyarDB.txt", "r", encoding="utf-8") as f:
-       messages = json.loads(f.read())
+    #with open("novynyarDB.txt", "r", encoding="utf-8") as f:
+    #   messages = json.loads(f.read())
         
     while True:
-        id = numpy.random.randint(0, len(messages) - 1)
+        id = random.randint(0, len(messages) - 1)
         print(messages[id])
         sec = input('Show next?.\n')
         os.system('cls')
