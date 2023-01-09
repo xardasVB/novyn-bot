@@ -28,9 +28,9 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
-with open("novynyarDB.txt", "r", encoding="utf-8") as f:
+with open("./novynyarDB.txt", "r", encoding="utf-8") as f:
     messages = json.loads(f.read())
-with open("neuralDB.txt", "r", encoding="utf-8") as f:
+with open("./neuralDB.txt", "r", encoding="utf-8") as f:
     neurals = json.loads(f.read())
        
 # Define a few command handlers. These usually take the two arguments update and
